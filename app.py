@@ -30,7 +30,8 @@ def chat():
         
         headers = {
             'Content-Type': 'application/json',
-            'Authorization': f'Bearer {XAI_API_KEY}'
+            'Authorization': f'Bearer {XAI_API_KEY}',
+            'Connection': 'keep-alive'
         }
         
         payload = {
@@ -40,11 +41,31 @@ def chat():
             'temperature': 0.7
         }
         
-        response = requests.post(XAI_API_URL, headers=headers, json=payload)
-        response.raise_for_status()
+        # Add timeout and better error handling
+        response = requests.post(
+            XAI_API_URL, 
+            headers=headers, 
+            json=payload,
+            timeout=30,  # 30 seconds timeout
+            verify=True  # Ensure SSL verification
+        )
         
+        if response.status_code == 408:  # Request Timeout
+            return jsonify({'error': 'Request timed out'}), 408
+        elif response.status_code == 502:  # Bad Gateway
+            return jsonify({'error': 'Bad gateway error'}), 502
+        elif response.status_code == 504:  # Gateway Timeout
+            return jsonify({'error': 'Gateway timeout'}), 504
+            
+        response.raise_for_status()
         return jsonify(response.json())
     
+    except requests.exceptions.Timeout:
+        return jsonify({'error': 'The request timed out'}), 408
+    except requests.exceptions.ConnectionError:
+        return jsonify({'error': 'Connection error occurred'}), 503
+    except requests.exceptions.RequestException as e:
+        return jsonify({'error': f'Request failed: {str(e)}'}), 500
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
