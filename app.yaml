@@ -7,6 +7,11 @@ env_variables:
 
 instance_class: F1
 
+network:
+  session_affinity: true
+  forwarded_ports:
+    - 8080/tcp
+
 automatic_scaling:
   target_cpu_utilization: 0.65
   min_instances: 0
@@ -23,4 +28,4 @@ handlers:
   script: auto
   secure: always
 
-entrypoint: gunicorn -b :$PORT app:app
+entrypoint: gunicorn -b :$PORT --timeout 120 --workers 2 --threads 4 --worker-class gevent app:app
