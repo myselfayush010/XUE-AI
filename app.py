@@ -3,13 +3,37 @@ from flask_cors import CORS
 import requests
 import os
 from dotenv import load_dotenv
+import socket
+from werkzeug.middleware.proxy_fix import ProxyFix
+from datetime import datetime
 
 # Load environment variables from .env file if it exists
 if os.path.exists('.env'):
     load_dotenv()
 
 app = Flask(__name__)
-CORS(app)
+
+# Cloud Run automatically handles SSL and proxying
+app.wsgi_app = ProxyFix(
+    app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1
+)
+
+# Configure CORS for Cloud Run
+CORS(app, resources={
+    r"/*": {
+        "origins": os.getenv('ALLOWED_ORIGINS', '*').split(','),
+        "methods": ["GET", "POST", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization"],
+        "max_age": 3600
+    }
+})
+
+# Configure session settings
+app.config.update(
+    SESSION_COOKIE_SECURE=True,
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE='Lax'
+)
 
 # Get API key from environment variable
 XAI_API_KEY = os.getenv('XAI_API_KEY')
@@ -69,9 +93,47 @@ def chat():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/_ah/warmup')
+def warmup():
+    """Handle Cloud Run warmup requests."""
+    return '', 200
+
+@app.route('/health')
+def health_check():
+    """Health check endpoint for Cloud Run."""
+    return jsonify({
+        'status': 'healthy',
+        'timestamp': datetime.utcnow().isoformat()
+    })
+
+@app.route('/readiness')
+def readiness_check():
+    # Check if we can connect to the x.ai API
+    try:
+        response = requests.get(
+            'https://api.x.ai/health',  # Replace with actual health endpoint if different
+            timeout=5
+        )
+        api_status = response.status_code == 200
+    except:
+        api_status = False
+
+    status = {
+        'status': 'ready' if api_status else 'not_ready',
+        'timestamp': datetime.utcnow().isoformat(),
+        'dependencies': {
+            'x_ai_api': 'up' if api_status else 'down'
+        }
+    }
+    return jsonify(status), 200 if api_status else 503
+
 if __name__ == '__main__':
-    # Get port from environment variable or default to 8080
+    # Get port from environment variable (Cloud Run sets this automatically)
     port = int(os.getenv('PORT', 8080))
     
-    # Run the app
-    app.run(host='0.0.0.0', port=port)
+    # Cloud Run handles HTTPS automatically
+    app.run(
+        host='0.0.0.0',
+        port=port,
+        debug=False
+    )

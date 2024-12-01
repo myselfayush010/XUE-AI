@@ -13,6 +13,7 @@ ENV PYTHONUNBUFFERED=1 \
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
     build-essential \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements first for better cache usage
@@ -23,11 +24,21 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Create a non-root user
-RUN useradd -m myuser
-USER myuser
+RUN useradd -m nonroot && \
+    chown -R nonroot:nonroot /app
+USER nonroot
 
-# Expose the port
-EXPOSE 8080
-
-# Command to run the application
-CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 app:app
+# Use gunicorn with gevent worker
+CMD exec gunicorn --bind :$PORT \
+    --workers 2 \
+    --threads 8 \
+    --worker-class gevent \
+    --worker-connections 1000 \
+    --keep-alive 75 \
+    --access-logfile - \
+    --error-logfile - \
+    --log-level info \
+    --max-requests 1000 \
+    --max-requests-jitter 50 \
+    --timeout 0 \
+    app:app
