@@ -3,9 +3,10 @@ from flask_cors import CORS
 import requests
 import os
 from dotenv import load_dotenv
-import socket
-from werkzeug.middleware.proxy_fix import ProxyFix
 from datetime import datetime
+import time
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
 
 # Load environment variables from .env file if it exists
 if os.path.exists('.env'):
@@ -13,27 +14,27 @@ if os.path.exists('.env'):
 
 app = Flask(__name__)
 
-# Cloud Run automatically handles SSL and proxying
-app.wsgi_app = ProxyFix(
-    app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1
+# Configure retries for requests
+retry_strategy = Retry(
+    total=3,  # number of retries
+    backoff_factor=0.3,  # wait 0.3s * (2 ** (retry - 1)) between retries
+    status_forcelist=[408, 429, 500, 502, 503, 504],
+    allowed_methods=["HEAD", "GET", "POST", "OPTIONS"]
 )
+adapter = HTTPAdapter(max_retries=retry_strategy, pool_connections=100, pool_maxsize=100)
+http = requests.Session()
+http.mount("http://", adapter)
+http.mount("https://", adapter)
 
-# Configure CORS for Cloud Run
+# Configure CORS
 CORS(app, resources={
     r"/*": {
-        "origins": os.getenv('ALLOWED_ORIGINS', '*').split(','),
+        "origins": "*",
         "methods": ["GET", "POST", "OPTIONS"],
         "allow_headers": ["Content-Type", "Authorization"],
         "max_age": 3600
     }
 })
-
-# Configure session settings
-app.config.update(
-    SESSION_COOKIE_SECURE=True,
-    SESSION_COOKIE_HTTPONLY=True,
-    SESSION_COOKIE_SAMESITE='Lax'
-)
 
 # Get API key from environment variable
 XAI_API_KEY = os.getenv('XAI_API_KEY')
@@ -55,7 +56,10 @@ def chat():
         headers = {
             'Content-Type': 'application/json',
             'Authorization': f'Bearer {XAI_API_KEY}',
-            'Connection': 'keep-alive'
+            'Connection': 'keep-alive',
+            'Accept': 'application/json',
+            'Accept-Encoding': 'gzip, deflate',
+            'Keep-Alive': 'timeout=65, max=100'
         }
         
         payload = {
@@ -65,33 +69,43 @@ def chat():
             'temperature': 0.7
         }
         
-        # Add timeout and better error handling
-        response = requests.post(
-            XAI_API_URL, 
-            headers=headers, 
+        # Use session with retry mechanism
+        start_time = time.time()
+        response = http.post(
+            XAI_API_URL,
+            headers=headers,
             json=payload,
-            timeout=30,  # 30 seconds timeout
-            verify=True  # Ensure SSL verification
+            timeout=(5, 30),  # (connect timeout, read timeout)
+            verify=True
         )
         
-        if response.status_code == 408:  # Request Timeout
-            return jsonify({'error': 'Request timed out'}), 408
-        elif response.status_code == 502:  # Bad Gateway
-            return jsonify({'error': 'Bad gateway error'}), 502
-        elif response.status_code == 504:  # Gateway Timeout
-            return jsonify({'error': 'Gateway timeout'}), 504
+        # Log response time
+        elapsed_time = time.time() - start_time
+        app.logger.info(f'API request completed in {elapsed_time:.2f} seconds')
+        
+        # Check response status
+        if response.status_code >= 400:
+            error_msg = f'API error: {response.status_code}'
+            try:
+                error_msg = response.json().get('error', error_msg)
+            except:
+                pass
+            return jsonify({'error': error_msg}), response.status_code
             
-        response.raise_for_status()
         return jsonify(response.json())
     
-    except requests.exceptions.Timeout:
-        return jsonify({'error': 'The request timed out'}), 408
+    except requests.exceptions.ConnectTimeout:
+        return jsonify({'error': 'Connection timed out while trying to reach the server'}), 504
+    except requests.exceptions.ReadTimeout:
+        return jsonify({'error': 'Server took too long to respond'}), 504
     except requests.exceptions.ConnectionError:
-        return jsonify({'error': 'Connection error occurred'}), 503
+        return jsonify({'error': 'Failed to establish connection with the server'}), 503
     except requests.exceptions.RequestException as e:
-        return jsonify({'error': f'Request failed: {str(e)}'}), 500
+        app.logger.error(f'Request failed: {str(e)}')
+        return jsonify({'error': 'An error occurred while processing your request'}), 500
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        app.logger.error(f'Unexpected error: {str(e)}')
+        return jsonify({'error': 'An unexpected error occurred'}), 500
 
 @app.route('/_ah/warmup')
 def warmup():
