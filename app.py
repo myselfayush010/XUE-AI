@@ -142,9 +142,9 @@ def readiness_check():
     return jsonify(status), 200 if api_status else 503
 
 if __name__ == '__main__':
-    
-    # Cloud Run handles HTTPS automatically
+    port = int(os.environ.get('PORT', 8080))
     app.run(
         host='0.0.0.0',
-        port=8080
+        port=port,
+        debug=False
     )

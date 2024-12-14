@@ -13,9 +13,17 @@ RUN apt-get update && \
 # Copy requirements and install dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt --upgrade
 
 # Copy the rest of the application
 COPY . .
 
-CMD [ "python3" "app.py" ]
+# Set environment variables
+ENV FLASK_APP=app.py
+ENV FLASK_ENV=production
+ENV PORT=8080
+
+# Expose port
+EXPOSE 8080
+
+# Run Flask application
+CMD ["python3", "app.py"]
