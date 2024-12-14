@@ -10,30 +10,33 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
     <style>
         .chat-container {
-            height: calc(100vh - 100px);
+            height: 100vh;
+            max-height: calc(100vh - 80px);
+            transition: all 0.3s ease;
         }
         .message {
-            max-width: 80%;
+            width: fit-content;
+            max-width: 90%;
             margin: 8px;
             padding: 16px;
             border-radius: 15px;
-            font-size: 18px;
+            font-size: clamp(16px, 2vw, 18px);
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
         .user-message {
             background-color: #e3f2fd;
             margin-left: auto;
             white-space: pre-wrap;
             color: #1a365d;
-            font-size: 18px;
         }
         .assistant-message {
             background-color: #f8fafc;
             margin-right: auto;
-            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
             color: #2c5282;
             border: 1px solid #e2e8f0;
             box-shadow: 0 2px 4px rgba(148, 163, 184, 0.1);
-            font-size: 18px;
         }
         .assistant-message pre {
             background-color: #ffffff;
@@ -41,11 +44,12 @@
             padding: 16px;
             margin: 12px 0;
             overflow-x: auto;
+            max-width: 100%;
             border: 1px solid #e2e8f0;
         }
         .assistant-message code {
-            font-family: 'Consolas', monospace;
-            font-size: 17px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: clamp(14px, 1.8vw, 17px);
         }
         .thinking {
             display: flex;
@@ -76,10 +80,21 @@
         }
         @media (max-width: 640px) {
             .chat-container {
-                height: calc(100vh - 80px);
+                height: calc(100vh - 60px);
+                padding: 8px;
             }
             .message {
-                max-width: 90%;
+                padding: 12px;
+                margin: 6px;
+                font-size: 16px;
+            }
+            .container {
+                padding: 8px;
+            }
+        }
+        @media (min-width: 1024px) {
+            .container {
+                max-width: 80vw;
             }
         }
         .markdown-body {
