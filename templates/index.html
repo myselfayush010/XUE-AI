@@ -32,13 +32,17 @@
             display: flex;
             flex-direction: column;
             box-shadow: none;
+            position: relative;
+            overflow: hidden;
         }
         .chat-container {
             flex: 1;
             overflow-y: auto;
             padding: 20px;
+            padding-bottom: 90px;
             background: white;
             counter-reset: cell;
+            -webkit-overflow-scrolling: touch;
         }
         .message {
             width: 100%;
@@ -89,6 +93,7 @@
             width: 100%;
             padding: 16px 20px;
             background: transparent;
+            z-index: 1000;
         }
         .input-container {
             max-width: 768px;
@@ -239,10 +244,38 @@
             font-size: 16px;
         }
         .thinking {
-            color: #757575;
-            font-style: italic;
-            padding: 8px 0;
-            font-size: 16px;
+            color: #1a73e8;
+            font-style: normal;
+            padding: 12px 16px;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(26, 115, 232, 0.05);
+            border-radius: 12px;
+            margin: 8px 0;
+        }
+        .thinking-dots {
+            display: inline-flex;
+            gap: 4px;
+        }
+        .thinking-dots span {
+            width: 4px;
+            height: 4px;
+            background: currentColor;
+            border-radius: 50%;
+            animation: blink 1.4s infinite;
+            opacity: 0.5;
+        }
+        .thinking-dots span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        .thinking-dots span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
         }
         /* Scrollbar styling */
         .chat-container::-webkit-scrollbar {
