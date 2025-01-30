@@ -1,4 +1,4 @@
-# Student AI Chat Assistant
+#  AI Chat Assistant   Simple Focused No History
 
 A responsive chat application powered by Gemini's API, designed specifically for students. The application works seamlessly on both mobile and desktop devices.
 
