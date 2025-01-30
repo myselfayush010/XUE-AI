@@ -110,12 +110,8 @@ def warmup():
     return '', 200
 
 @app.route('/health')
-def health_check():
-    """Health check endpoint for Cloud Run."""
-    return jsonify({
-        'status': 'healthy',
-        'timestamp': datetime.utcnow().isoformat()
-    })
+def health():
+    return jsonify({'status': 'healthy'}), 200
 
 @app.route('/readiness')
 def readiness_check():
@@ -140,4 +136,5 @@ def readiness_check():
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 8080))
-    app.run(host='0.0.0.0', port=port, debug=False)
+    host = os.environ.get('HOST', '0.0.0.0')
+    app.run(host=host, port=port)
