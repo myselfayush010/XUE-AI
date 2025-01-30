@@ -1,6 +1,6 @@
 # Student AI Chat Assistant
 
-A responsive chat application powered by x.ai's API, designed specifically for students. The application works seamlessly on both mobile and desktop devices.
+A responsive chat application powered by Gemini's API, designed specifically for students. The application works seamlessly on both mobile and desktop devices.
 
 ## Features
 
