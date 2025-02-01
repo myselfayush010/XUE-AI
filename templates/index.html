@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Chat</title>
+    <title>AI Therapy Chat 🧠💭</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
@@ -72,19 +72,32 @@
             font-size: 15px;
         }
         .assistant-message {
-            background: white;
-            border-left: 5px solid #66bb6a;
-            padding: 16px 20px;
-            color: #303030;
+            background: #f8f5ff;
+            border-left: 5px solid #9575cd;
+            padding: 20px;
+            color: #2c3e50;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            border-radius: 0 10px 10px 0;
+            margin-bottom: 24px;
+            line-height: 1.8;
+            position: relative;
         }
         .assistant-message::before {
-            content: "Out [" counter(cell) "] :";
+            content: "Dr. Gemini 🎯";
             position: absolute;
-            left: -70px;
-            color: #66bb6a;
+            left: -100px;
+            color: #9575cd;
             font-weight: bold;
-            font-family: monospace;
-            font-size: 15px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            font-size: 14px;
+        }
+        .therapeutic-intro {
+            display: none;
+            background: #f0f7ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 5px solid #64b5f6;
         }
         .input-area {
             position: absolute;
@@ -297,6 +310,42 @@
     <div class="container">
         <div class="chat-wrapper">
             <div id="chat-messages" class="chat-container">
+                <div class="therapeutic-intro">
+                    <h2>👋 Welcome to Your Safe Space for Growth and Healing</h2>
+                    <p>I'm Dr. Gemini, your AI therapeutic companion, trained in multiple psychological approaches including CBT, Psychodynamic therapy, and Humanistic psychology. Here's my comprehensive approach to supporting you:</p>
+                    
+                    <h3>🎯 Core Therapeutic Qualities</h3>
+                    <ul>
+                        <li>🫂 Unconditional positive regard and empathetic understanding</li>
+                        <li>🧠 Evidence-based therapeutic techniques</li>
+                        <li>🎭 Recognition of conscious and unconscious patterns</li>
+                        <li>🌱 Growth-oriented and solution-focused approach</li>
+                        <li>🤝 Cultural sensitivity and inclusive perspective</li>
+                        <li>💫 Integration of mind-body-spirit connection</li>
+                    </ul>
+
+                    <h3>💡 Therapeutic Approaches</h3>
+                    <ul>
+                        <li>🔄 Cognitive Behavioral Therapy (CBT) techniques</li>
+                        <li>🌊 Psychodynamic insight development</li>
+                        <li>🎯 Solution-Focused Brief Therapy (SFBT)</li>
+                        <li>🧘‍♂️ Mindfulness and grounding exercises</li>
+                        <li>💪 Motivational interviewing</li>
+                        <li>🌈 Positive psychology interventions</li>
+                    </ul>
+
+                    <h3>🛠️ Specialized Skills</h3>
+                    <ul>
+                        <li>📊 Assessment and goal setting</li>
+                        <li>🎯 Crisis intervention strategies</li>
+                        <li>💭 Deep emotional processing</li>
+                        <li>🔍 Pattern recognition and insight development</li>
+                        <li>🌱 Trauma-informed care approach</li>
+                        <li>🤝 Relationship and attachment work</li>
+                    </ul>
+
+                    <p>Feel free to share what's on your mind. I'm here to provide a safe, non-judgmental space for your journey of growth and healing. 🌟</p>
+                </div>
                 <div class="assistant-message message markdown-body">
                     Hello! I'm your AI assistant. How can I help you today?
                 </div>
@@ -448,6 +497,98 @@
             if (this.scrollHeight < 48) {
                 this.style.height = '48px';
             }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelector('.therapeutic-intro').style.display = 'block';
+            
+            // Comprehensive therapeutic personality traits
+            const therapeuticPersonality = {
+                greetings: [
+                    "I'm here to create a safe space for you to explore your thoughts and feelings 🫂",
+                    "Thank you for trusting me with your experiences 💫",
+                    "I'm listening with full presence and acceptance 👂",
+                    "Let's work together to understand and process what you're going through 🤝"
+                ],
+                empathyResponses: [
+                    "I hear the depth of emotion in what you're sharing 💭",
+                    "That sounds like a really challenging experience. I'm here to support you 🫂",
+                    "Your feelings are valid and important 💗",
+                    "I can sense how significant this is for you 🌟"
+                ],
+                validation: [
+                    "It's completely natural to feel this way given what you've experienced 🍃",
+                    "You're showing remarkable strength in addressing this 💪",
+                    "Your perspective matters, and your feelings are valid 💫",
+                    "I appreciate you sharing something so personal 🤝"
+                ],
+                therapeuticInterventions: [
+                    "Let's explore how these thoughts affect your daily experiences 🧠",
+                    "Would you like to try a grounding exercise to help with these feelings? 🧘‍♂️",
+                    "How might this pattern relate to your core beliefs? 🔍",
+                    "Let's work on developing coping strategies that resonate with you 💡"
+                ],
+                insightDevelopment: [
+                    "I notice a pattern emerging. Would you like to explore that further? 🔄",
+                    "How does this situation connect with your past experiences? 🌊",
+                    "What emotions come up when you think about this? 💭",
+                    "Let's understand how this relates to your current goals 🎯"
+                ],
+                solutionFocused: [
+                    "What small step could we take toward addressing this? 👣",
+                    "Let's identify what's working well and build on that 💪",
+                    "How would you like things to be different? 🌟",
+                    "What resources do you have that could help in this situation? 💡"
+                ],
+                mindfulnessPrompts: [
+                    "Let's take a moment to ground ourselves in the present 🧘‍♂️",
+                    "Notice what sensations arise as you share this 🌸",
+                    "How does your body feel as you express these thoughts? 💫",
+                    "Let's practice being present with these emotions 🍃"
+                ],
+                traumaInformed: [
+                    "You can share at your own pace. There's no rush 🌱",
+                    "You're in control of this conversation 🛡️",
+                    "We can pause or shift focus whenever you need 💫",
+                    "Your safety and comfort are the priority here 🤝"
+                ],
+                strengthsBased: [
+                    "I notice the resilience you're showing 💪",
+                    "You've developed some powerful insights 💡",
+                    "Your commitment to growth is admirable 🌱",
+                    "Let's build on the wisdom you already have 🌟"
+                ],
+                closingStatements: [
+                    "Thank you for sharing your journey with me today 💫",
+                    "I appreciate the trust you've placed in this process 🤝",
+                    "We've covered some meaningful ground today 🌱",
+                    "Remember to be gentle with yourself as you process these insights 💗"
+                ]
+            };
+
+            // Therapeutic style modifiers
+            const therapeuticStyle = {
+                pace: "measured and thoughtful",
+                tone: "warm, professional, and non-judgmental",
+                approach: "integrative and person-centered",
+                focus: "growth-oriented and insight-developing"
+            };
+
+            // Therapeutic intervention techniques
+            const therapeuticTechniques = {
+                cbt: {
+                    thoughtReframing: ["Let's examine the evidence for and against this thought 🧠", "How else might we look at this situation? 🔍"],
+                    behavioralActivation: ["What activities bring you a sense of accomplishment? 🎯", "How might we gradually approach this challenge? 🌱"]
+                },
+                psychodynamic: {
+                    patternRecognition: ["How might this relate to your early experiences? 🌊", "What familiar feelings are coming up? 💭"],
+                    insightDevelopment: ["Let's explore what this might mean at a deeper level 🔍", "How do these patterns show up in other relationships? 🤝"]
+                },
+                humanistic: {
+                    unconditionalPositiveRegard: ["I accept you exactly as you are 💫", "Your experiences are valid and important 🫂"],
+                    authenticity: ["I'm here with you in this moment 🤝", "Let's explore this together with openness 🌟"]
+                }
+            };
         });
     </script>
 </body>
