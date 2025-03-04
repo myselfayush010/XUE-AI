@@ -363,44 +363,39 @@
         /* Mobile devices - portrait phones */
         @media (max-width: 640px) {
             .message-wrapper {
-                padding: 0 35px; /* Reduced from 45px for mobile */
+                padding: 0 30px; /* Reduced side padding */
+                margin: 12px 0; /* Slightly reduced vertical margin */
             }
             
             .user-message, .assistant-message {
-                max-width: 98%; /* Increased to almost full width */
+                max-width: 100%; /* Full width for messages */
             }
             
-            .markdown-body {
-                font-size: 16px !important; /* Smaller font for readability */
-            }
-            
-            .markdown-body pre code {
-                font-size: 15px !important; /* Smaller code font */
-            }
-            
-            .input-container {
-                padding: 0 5px; /* Smaller padding */
-            }
-            
-            #message-input {
-                padding: 10px 14px; /* Smaller padding */
-                font-size: 16px; /* Smaller font */
-            }
-            
-            /* Adjust avatar size for mobile */
-            .assistant-message::before,
-            .user-message::after {
-                width: 30px;
-                height: 30px;
-                font-size: 11px;
-            }
-            
+            /* Adjust avatar size and position for mobile */
             .assistant-message::before {
-                left: -30px; /* Moved closer to edge */
+                left: -28px; /* Move closer to left edge */
+                width: 28px; /* Slightly smaller */
+                height: 28px; /* Slightly smaller */
+                font-size: 10px; /* Smaller text */
             }
             
             .user-message::after {
-                right: -30px; /* Moved closer to edge */
+                right: -28px; /* Move closer to right edge */
+                width: 28px; /* Slightly smaller */
+                height: 28px; /* Slightly smaller */
+                font-size: 10px; /* Smaller text */
+            }
+            
+            /* Make container use full width */
+            .container, .chat-wrapper {
+                width: 100%;
+                max-width: 100%;
+            }
+            
+            /* Adjust message container */
+            .chat-container {
+                padding-left: 5px;
+                padding-right: 5px;
             }
         }
         
