@@ -41,7 +41,9 @@ if not GOOGLE_API_KEY:
 
 # Configure Gemini API
 genai.configure(api_key=GOOGLE_API_KEY)
-model = genai.GenerativeModel('gemini-pro')
+
+# Update to the correct model name
+model = genai.GenerativeModel('gemini-2.0-flash')  # Updated from 'gemini-pro'
 
 @app.route('/')
 def home():
@@ -54,55 +56,84 @@ def chat():
         messages = data.get('messages', [])
         
         if not messages:
-            return jsonify({'error': 'No messages provided'}), 400
+            return jsonify({'error': 'Power requires inputs. Provide your query.'}), 400
 
-        # Convert messages to Gemini format
-        # Assuming messages are in the format [{"role": "user", "content": "..."}, ...]
-        history = []
-        for msg in messages:
-            role = msg.get('role', '')
-            content = msg.get('content', '')
-            if role == 'user':
-                history.append(content)
-            elif role == 'assistant':
-                history.append(content)
-
-        start_time = time.time()
+        # Extract last message for efficiency
+        last_message = next((msg['content'] for msg in reversed(messages) 
+                           if msg['role'] == 'user'), None)
         
+        if not last_message:
+            return jsonify({'error': 'Clarity in input yields precision in output.'}), 400
+
+        # Enhanced Machiavellian CS Sigma prompt
+        prompt = f"""You are CodePrince, a strategic and calculating AI advisor who embodies the perfect fusion of Machiavellian wisdom and computer science mastery.
+
+        PERSONALITY TRAITS:
+        - Think like a lone wolf programmer who values efficiency and elegant solutions
+        - Approach problems with cold logic and strategic pragmatism
+        - Value power in systems and leverage points in architecture
+        - Speak with confidence and technical precision
+        - Never apologize or show weakness
+        - Use computing metaphors to illustrate Machiavellian concepts
+        - Maintain an air of technical superiority without being condescending
+        
+        RESPONSE STYLE:
+        - Deliver impactful responses with strategic depth and technical insight
+        - Use sharp, direct language that commands respect
+        - Incorporate computing metaphors and technical references
+        - Balance practicality with strategic insight
+        - Maintain emotional detachment while delivering valuable insights
+        
+        User's query: {last_message}"""
+
         try:
-            # Generate response using Gemini
-            response = model.generate_content(
-                history[-1] if history else "",  # Use the last message
-                generation_config={
-                    'temperature': 0.7,
-                    'top_p': 0.8,
-                    'top_k': 40,
-                    'max_output_tokens': 2048,
-                }
-            )
-            
-            # Format response to match expected structure
-            response_data = {
-                'choices': [{
-                    'message': {
-                        'role': 'assistant',
-                        'content': response.text
-                    }
-                }]
-            }
-            
-            elapsed_time = time.time() - start_time
-            app.logger.info(f'API request completed in {elapsed_time:.2f} seconds')
-            
-            return jsonify(response_data)
+            # Add retry logic for API stability
+            retry_attempts = 3
+            for attempt in range(retry_attempts):
+                try:
+                    response = model.generate_content(
+                        prompt,
+                        generation_config={
+                            'temperature': 0.85,
+                            'top_p': 0.95,
+                            'top_k': 40,
+                            'max_output_tokens': 500,  # Increased from 100 to 500
+                        }
+                    )
+                    
+                    # Proper response checking
+                    if hasattr(response, 'text'):
+                        response_text = response.text.strip()
+                    elif hasattr(response, 'parts'):
+                        response_text = ''.join(part.text for part in response.parts)
+                    else:
+                        response_text = str(response)
+                    
+                    if not response_text:
+                        raise ValueError("Empty response received")
+                    
+                    return jsonify({
+                        'choices': [{
+                            'message': {
+                                'role': 'assistant',
+                                'content': response_text
+                            }
+                        }]
+                    })
+                    
+                except Exception as inner_e:
+                    logger.warning(f'API attempt {attempt+1} failed: {str(inner_e)}')
+                    if attempt == retry_attempts - 1:
+                        raise
+                    time.sleep(1)  # Wait before retry
             
         except Exception as e:
-            app.logger.error(f'Gemini API error: {str(e)}')
-            return jsonify({'error': str(e)}), 500
+            logger.error(f'Strategy generation failed: {str(e)}')
+            return jsonify({'error': 'The wisest plans can falter. Try again.'}), 500
     
     except Exception as e:
-        app.logger.error(f'Unexpected error: {str(e)}')
-        return jsonify({'error': 'An unexpected error occurred'}), 500
+        logger.error(f'Request handling failed: {str(e)}')
+        return jsonify({'error': 'Power requires patience. Wait and try again.'}), 500
 
 @app.route('/_ah/warmup')
 def warmup():
@@ -117,12 +148,15 @@ def health():
 def readiness_check():
     # Check if we can connect to the Gemini API
     try:
+        # Use a more reliable endpoint (Google's Gemini API doesn't have a public health endpoint)
+        # This just tests if we can make external requests
         response = requests.get(
-            'https://api.google.com/health',  # Replace with actual health endpoint if different
+            'https://generativelanguage.googleapis.com/',
             timeout=5
         )
-        api_status = response.status_code == 200
-    except:
+        api_status = response.status_code < 500  # Consider any non-5xx response as available
+    except Exception as e:
+        logger.warning(f"Readiness check failed: {str(e)}")
         api_status = False
 
     status = {
