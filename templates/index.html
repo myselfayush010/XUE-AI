@@ -39,8 +39,7 @@
         .chat-container {
             flex: 1;
             overflow-y: auto;
-            padding: 20px;
-            padding-bottom: 90px;
+            padding: 20px 20px 90px 20px;
             background: #f8f9fa; /* Light background like modern chat apps */
             -webkit-overflow-scrolling: touch;
         }
@@ -48,7 +47,7 @@
             width: 100%;
             max-width: 100%;
             margin: 16px 0;
-            font-size: 16px;
+            font-size: 18px; /* Increased from 16px */
             line-height: 1.6;
             position: relative;
         }
@@ -58,7 +57,7 @@
             padding: 12px 16px;
             color: #303030;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-            font-size: 16px;
+            font-size: 18px; /* Increased from 16px */
             white-space: pre-wrap;
             max-width: 85%;
             margin-left: auto; /* Push to right side */
@@ -86,32 +85,34 @@
             position: absolute;
             left: -45px;
             top: 8px;
-            width: 32px;
-            height: 32px;
+            width: 36px; /* Slightly larger avatar */
+            height: 36px; /* Slightly larger avatar */
             background: #9575cd;
             color: white;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
+            font-size: 14px; /* Increased from 12px */
             font-weight: bold;
+            z-index: 1; /* Ensure it appears above other elements */
         }
         .user-message::after {
             content: "YOU";
             position: absolute;
             right: -45px;
             top: 8px;
-            width: 32px;
-            height: 32px;
+            width: 36px; /* Slightly larger avatar */
+            height: 36px; /* Slightly larger avatar */
             background: #1a73e8;
             color: white;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
+            font-size: 14px; /* Increased from 12px */
             font-weight: bold;
+            z-index: 1; /* Ensure it appears above other elements */
         }
         .input-area {
             position: absolute;
@@ -136,10 +137,10 @@
             border: none;
             background: white;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            font-size: 16px;
-            line-height: 24px;
+            font-size: 18px; /* Increased from 16px */
+            line-height: 26px; /* Adjusted for larger font */
             padding: 12px 16px;
-            min-height: 48px;
+            min-height: 52px; /* Slightly increased for larger text */
             border-radius: 24px;
             resize: none;
             outline: none;
@@ -180,7 +181,7 @@
             fill: #1a73e8;
         }
         .markdown-body {
-            font-size: 16px !important;
+            font-size: 18px !important; /* Increased from 16px */
             line-height: 1.6 !important;
             color: #303030 !important;
         }
@@ -195,13 +196,14 @@
         }
         .markdown-body code {
             font-family: monospace !important;
-            font-size: 15px !important;
+            font-size: 17px !important; /* Increased from 15px */
             background: #f7f7f7 !important;
             padding: 2px 4px !important;
             border-radius: 0 !important;
             color: #303030 !important;
         }
         .markdown-body pre code {
+            font-size: 17px !important; /* Increased from 15px */
             padding: 0 !important;
         }
         .markdown-body p {
@@ -212,9 +214,9 @@
             margin: 16px 0 8px !important;
             color: #303030 !important;
         }
-        .markdown-body h1 { font-size: 1.8em !important; }
-        .markdown-body h2 { font-size: 1.5em !important; }
-        .markdown-body h3 { font-size: 1.3em !important; }
+        .markdown-body h1 { font-size: 2.0em !important; } /* Increased from 1.8em */
+        .markdown-body h2 { font-size: 1.7em !important; } /* Increased from 1.5em */
+        .markdown-body h3 { font-size: 1.5em !important; } /* Increased from 1.3em */
         .markdown-body ul, .markdown-body ol {
             padding-left: 24px !important;
             margin: 8px 0 !important;
@@ -315,6 +317,155 @@
         }
         .chat-container::-webkit-scrollbar-thumb:hover {
             background: #b0bec5;
+        }
+        /* Add these styles to ensure proper spacing for avatars */
+        .message-wrapper {
+            display: flex;
+            width: 100%;
+            margin: 16px 0;
+            padding: 0 50px; /* Add horizontal padding to make room for avatars */
+            position: relative;
+        }
+
+        /* Add this if you want a cleaner look with the avatars */
+        .message {
+            position: relative;
+        }
+        /* Add these responsive styles to your existing CSS */
+    
+        /* Base responsive container */
+        .container {
+            height: 100vh;
+            max-width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Responsive message width adjustments */
+        .user-message, .assistant-message {
+            max-width: 85%;
+        }
+        
+        /* Responsive avatar and message spacing */
+        .message-wrapper {
+            display: flex;
+            width: 100%;
+            margin: 16px 0;
+            padding: 0 60px; /* Increased padding for avatar space */
+            position: relative;
+        }
+        
+        /* Media queries for different screen sizes */
+        
+        /* Mobile devices - portrait phones */
+        @media (max-width: 640px) {
+            .message-wrapper {
+                padding: 0 45px; /* Reduced side padding on mobile */
+            }
+            
+            .user-message, .assistant-message {
+                max-width: 90%; /* Wider messages on mobile */
+                font-size: 16px; /* Slightly smaller font on mobile */
+            }
+            
+            .markdown-body {
+                font-size: 16px !important; /* Smaller font for readability */
+            }
+            
+            .markdown-body pre code {
+                font-size: 15px !important; /* Smaller code font */
+            }
+            
+            .input-container {
+                padding: 0 5px; /* Smaller padding */
+            }
+            
+            #message-input {
+                padding: 10px 14px; /* Smaller padding */
+                font-size: 16px; /* Smaller font */
+            }
+            
+            /* Adjust avatar size for mobile */
+            .assistant-message::before,
+            .user-message::after {
+                width: 30px;
+                height: 30px;
+                font-size: 11px;
+            }
+            
+            .assistant-message::before {
+                left: -35px;
+            }
+            
+            .user-message::after {
+                right: -35px;
+            }
+        }
+        
+        /* Tablets and small laptops */
+        @media (min-width: 641px) and (max-width: 1024px) {
+            .message-wrapper {
+                padding: 0 55px; /* Adjusted side padding */
+            }
+            
+            .user-message, .assistant-message {
+                max-width: 85%; /* Balanced message width */
+            }
+            
+            /* Adjust avatar position for tablets */
+            .assistant-message::before {
+                left: -40px;
+            }
+            
+            .user-message::after {
+                right: -40px;
+            }
+        }
+        
+        /* Larger screens - desktops */
+        @media (min-width: 1025px) {
+            .message-wrapper {
+                max-width: 1024px; /* Maximum width on large screens */
+                margin-left: auto;
+                margin-right: auto;
+            }
+            
+            .input-container {
+                max-width: 900px; /* Input container maximum width */
+            }
+        }
+        
+        /* Fix for smaller height screens */
+        @media (max-height: 600px) {
+            .chat-container {
+                padding-bottom: 70px; /* Less bottom padding */
+            }
+            
+            .input-area {
+                padding: 10px 15px; /* Smaller input area */
+            }
+            
+            #message-input {
+                min-height: 45px; /* Smaller input height */
+            }
+        }
+        
+        /* Fix for landscape mobile orientation */
+        @media (max-height: 450px) and (orientation: landscape) {
+            .chat-container {
+                padding-bottom: 60px;
+            }
+            
+            .input-area {
+                padding: 8px 12px;
+            }
+            
+            .message-wrapper {
+                margin: 10px 0;
+            }
         }
     </style>
 </head>
