@@ -59,7 +59,7 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
             font-size: 18px; /* Increased from 16px */
             white-space: pre-wrap;
-            max-width: 85%;
+            max-width: 92%; /* Increased from 85% */
             margin-left: auto; /* Push to right side */
             margin-right: 10px;
             box-shadow: 0 1px 2px rgba(0,0,0,0.1);
@@ -73,7 +73,7 @@
             padding: 16px;
             color: #2c3e50;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-            max-width: 85%;
+            max-width: 92%; /* Increased from 85% */
             margin-right: auto; /* Push to left side */
             margin-left: 10px;
             box-shadow: 0 1px 2px rgba(0,0,0,0.1);
@@ -83,7 +83,7 @@
         .assistant-message::before {
             content: "XUE";
             position: absolute;
-            left: -45px;
+            left: -36px; /* Moved closer to left edge */
             top: 8px;
             width: 36px; /* Slightly larger avatar */
             height: 36px; /* Slightly larger avatar */
@@ -100,7 +100,7 @@
         .user-message::after {
             content: "YOU";
             position: absolute;
-            right: -45px;
+            right: -36px; /* Moved closer to right edge */
             top: 8px;
             width: 36px; /* Slightly larger avatar */
             height: 36px; /* Slightly larger avatar */
@@ -323,7 +323,7 @@
             display: flex;
             width: 100%;
             margin: 16px 0;
-            padding: 0 50px; /* Add horizontal padding to make room for avatars */
+            padding: 0 40px; /* Reduced from 60px to bring avatars closer to edges */
             position: relative;
         }
 
@@ -346,7 +346,7 @@
         
         /* Responsive message width adjustments */
         .user-message, .assistant-message {
-            max-width: 85%;
+            max-width: 92%; /* Increased from 85% to make messages wider */
         }
         
         /* Responsive avatar and message spacing */
@@ -354,7 +354,7 @@
             display: flex;
             width: 100%;
             margin: 16px 0;
-            padding: 0 60px; /* Increased padding for avatar space */
+            padding: 0 40px; /* Reduced from 60px to bring avatars closer to edges */
             position: relative;
         }
         
@@ -363,12 +363,11 @@
         /* Mobile devices - portrait phones */
         @media (max-width: 640px) {
             .message-wrapper {
-                padding: 0 45px; /* Reduced side padding on mobile */
+                padding: 0 35px; /* Reduced from 45px for mobile */
             }
             
             .user-message, .assistant-message {
-                max-width: 95%; /* Increased from 90% to make messages wider */
-                font-size: 16px; /* Slightly smaller font on mobile */
+                max-width: 98%; /* Increased to almost full width */
             }
             
             .markdown-body {
@@ -397,11 +396,11 @@
             }
             
             .assistant-message::before {
-                left: -35px;
+                left: -30px; /* Moved closer to edge */
             }
             
             .user-message::after {
-                right: -35px;
+                right: -30px; /* Moved closer to edge */
             }
         }
         
