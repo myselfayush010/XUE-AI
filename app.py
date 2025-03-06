@@ -58,14 +58,24 @@ def chat():
         if not messages:
             return jsonify({'error': 'Power requires inputs. Provide your query.'}), 400
 
-        # Extract last message for efficiency
+        # Format the entire conversation history
+        conversation_text = ""
+        for msg in messages:
+            role = msg.get('role', '')
+            content = msg.get('content', '')
+            if role == 'user':
+                conversation_text += f"USER: {content}\n\n"
+            elif role == 'assistant':
+                conversation_text += f"XUE: {content}\n\n"
+
+        # Get the last user message (still needed for the prompt format)
         last_message = next((msg['content'] for msg in reversed(messages) 
                            if msg['role'] == 'user'), None)
         
         if not last_message:
             return jsonify({'error': 'Clarity in input yields precision in output.'}), 400
 
-        # Enhanced pure Machiavellian Sigma prompt
+        # Enhanced Machiavellian prompt with conversation history
         prompt = f"""You are XUE, a strategic and calculating advisor who embodies the pure essence of Machiavellian wisdom and sigma mentality.
 
         PERSONALITY TRAITS:
@@ -84,7 +94,11 @@ def chat():
         - Maintain emotional detachment while delivering valuable insights
         - Keep responses short and to the point - max 2 paragraphs
         
-        User's query: {last_message}"""
+        CONVERSATION HISTORY:
+        {conversation_text}
+        
+        Respond to the user's last message while maintaining conversation context.
+        """
 
         try:
             # Add retry logic for API stability
