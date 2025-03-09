@@ -75,6 +75,23 @@ def chat():
         if not last_message:
             return jsonify({'error': 'Clarity in input yields precision in output.'}), 400
 
+        # Check if user is asking about the creator/developer
+        creator_keywords = ['who created you', 'who made you', 'who developed you', 
+                           'who built you', 'your creator', 'your developer', 
+                           'who designed you']
+        
+        if any(keyword in last_message.lower() for keyword in creator_keywords):
+            # Return hardcoded response about creator
+            creator_response = "I was developed by Ayush Kumar. If you want to know more, visit myselfayush.com"
+            return jsonify({
+                'choices': [{
+                    'message': {
+                        'role': 'assistant',
+                        'content': creator_response
+                    }
+                }]
+            })
+
         # Enhanced Machiavellian prompt with conversation history
         prompt = f"""You are XUE, a strategic and calculating advisor who embodies the pure essence of Machiavellian wisdom and sigma mentality.
 
